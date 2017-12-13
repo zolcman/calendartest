@@ -35,7 +35,7 @@ class DiskRestoreWiz extends Component {
           selected: {},
           filteredItems: false,
           filterval: '',
-         
+          block4thstep:true,
           disableAddbtn:true
           
         }
@@ -69,7 +69,12 @@ class DiskRestoreWiz extends Component {
         if (!this.state.selectedOnFirstStage) {
           return
         }
-        this.setState({page:2,disableAddbtn:true})
+        if (this.state.pointId) {
+          this.setState({page:2,disableAddbtn:false})
+        }
+        if (!this.state.pointId) {
+          this.setState({page:2,disableAddbtn:true})
+        }
       }
       if (this.state.page == 2) {
         this.setState({page:3,disableAddbtn:true})
@@ -93,11 +98,17 @@ class DiskRestoreWiz extends Component {
       if (this.state.page == 4) {
         this.setState({page:3})
       }
-      if (this.state.page == 3) {
-        this.setState({page:2})
+      if (this.state.page == 3 && this.state.pointId) {
+        this.setState({page:2,disableAddbtn:false})
       }
-      if (this.state.page == 2) {
-        this.setState({page:1})
+      if (this.state.page == 3 && !this.state.pointId) {
+        this.setState({page:2,disableAddbtn:true})
+      }
+      if (this.state.page == 2 && this.state.selectedOnFirstStage) {
+        this.setState({page:1,disableAddbtn:false})
+      }
+      if (this.state.page == 2 && !this.state.selectedOnFirstStage) {
+        this.setState({page:1,disableAddbtn:true})
       }
 
     }
@@ -652,22 +663,43 @@ componentDidMount() {
         return (<div className="wizzard1">{this.window5()}</div>)
       }
     }
+
     switch (param) {
-      if (param == 2 && !this.state.selectedOnFirstStage) { 
+      if (param == 2 && !this.state.selectedOnFirstStage && param > 2) { 
+        console.log('1')
           return
       }
       if (param == 3 && !this.state.pointId) { 
+        console.log('2')
         return
     }
     if (param == 4 && this.state.block4thstep) { 
+      console.log('3')
       return
   }
 
     
-      else if (!this.state.selectedOnFirstStage || !this.state.pointId || this.state.block4thstep)  {
+      else if (!this.state.selectedOnFirstStage && param >= 2 || !this.state.pointId && param >= 3 || this.state.block4thstep && param >= 4)  {
+        console.log(param)
         return
         
       } else {
+        console.log('else')
+        if (param == 2 && this.state.pointId) {
+          this.setState({disableAddbtn:false})
+          console.log('el222se')
+        }
+        if (param == 2 && !this.state.pointId) {
+          this.setState({disableAddbtn:true})
+          console.log('ffff')
+        }
+        if (param == 3 && this.state.block4thstep) {
+          this.setState({disableAddbtn:true})
+        }
+
+        if (param == 1 && this.state.selectedOnFirstStage) {
+          this.setState({disableAddbtn:false})
+        }
         this.setState({page:param})
       }
       
